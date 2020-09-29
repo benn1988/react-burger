@@ -13,11 +13,15 @@ const controls = [
 
 const buildControls = ( props ) => (
     <div className={classes.BuildControls}>
+        <p>Current Price: <strong>{props.price.toFixed(2)}</strong></p>
         {controls.map(ctrl => ( // map through each control, and render it
             <BuildControl 
                 key={ctrl.label} 
                 label={ctrl.label} 
-                added={() => props.ingredientAdded(ctrl.type)} // when clicked, we invoke the handler and pass to it the ingredient
+                // when clicked, we invoke the handler and pass to it the ingredient
+                removed={() => props.ingredientRemoved(ctrl.type)}
+                added={() => props.ingredientAdded(ctrl.type)}
+                disabled={props.disabledBtn[ctrl.type]} // passing the state of the button for this ingredient
                 />
         ))}
     </div>
