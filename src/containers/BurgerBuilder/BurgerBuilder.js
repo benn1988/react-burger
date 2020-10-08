@@ -20,8 +20,10 @@ class BurgerBuilder extends Component {
             cheese: 0,
             meat: 0
         },
-        totalPrice: 4
+        totalPrice: 4,
+        purchaseable: false
     }
+
 
     // handler to add one ingredient each time when the 'More' button is clicked. It accepts the ingredient as argument
     addIngredientHandler = (type) => {
@@ -37,6 +39,7 @@ class BurgerBuilder extends Component {
         this.setState({totalPrice: newPrice, ingredients: updatedIngredients});
     }
 
+    // handler to remove one ingredient each time when the 'Less' button is clicked. It accepts the ingredient as argument
     removeIngredientHandler = (type) => {
         const oldCount = this.state.ingredients[type];
         if (oldCount <= 0) {
@@ -58,10 +61,16 @@ class BurgerBuilder extends Component {
         const disabledInfo = {
             ...this.state.ingredients
         };
-        // check if each value of the state is less or equal to 0
+        // replace the values from the state copy to true or false, wether greater than 0, to be able to manipulate the state of each ingredient's 'Less' button
         for (let key in disabledInfo) {
             disabledInfo[key] = disabledInfo[key] <= 0
         }
+        // check if all the values of disabledInfo are true, then the 'Order Now' btn is disabled(no ingredients selected)
+        const disabledOrderBtn = Object.keys(disabledInfo)
+            .map( igKey => disabledInfo[igKey])
+            .reduce( (final, current) => {
+                return (final && current);
+            } , true);
         return (
             <Aux>
                 <Burger ingredients={this.state.ingredients}/>
@@ -70,6 +79,7 @@ class BurgerBuilder extends Component {
                     ingredientAdded={this.addIngredientHandler}
                     ingredientRemoved={this.removeIngredientHandler}
                     price={this.state.totalPrice}
+                    disabledOrderBtn={disabledOrderBtn}
                 />
             </Aux>
         );
