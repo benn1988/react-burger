@@ -24,7 +24,10 @@ const buildControls = ( props ) => (
                 disabled={props.disabledBtn[ctrl.type]} // passing the state of the button for this ingredient
                 />
         ))}
-        <button disabled={props.disabledOrderBtn} className={classes.OrderButton}>ORDER NOW</button>
+        <button 
+            onClick={props.ordered} // display the modal on click
+            disabled={props.disabledOrderBtn} 
+            className={classes.OrderButton}>ORDER NOW</button>
     </div>
 );
 

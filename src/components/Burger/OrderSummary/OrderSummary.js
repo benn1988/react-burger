@@ -2,6 +2,7 @@ import React from 'react';
 
 import Aux from '../../../hoc/Auxiliar';
 
+// display the order details: a list of ingredients and amount of ingredients
 const orderSummary = (props) => {
   const ingredientSummary = Object.keys(props.ingredients)
     .map(igKey => {
