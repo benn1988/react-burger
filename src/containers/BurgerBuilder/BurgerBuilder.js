@@ -64,6 +64,11 @@ class BurgerBuilder extends Component {
         this.setState({purchasing: true});
     }
 
+    // handler to close the modal when the backdrop area is clicked
+    purchaseCancelHandler = () => {
+        this.setState({purchasing: false});
+    }
+
     render () {
         // create a copy of the state
         const disabledInfo = {
@@ -81,7 +86,7 @@ class BurgerBuilder extends Component {
             } , true);
         return (
             <Aux>
-                <Modal show={this.state.purchasing}>
+                <Modal show={this.state.purchasing} modalClosed={this.purchaseCancelHandler}>
                     <OrderSummary ingredients={this.state.ingredients} />
                 </Modal>
                 <Burger ingredients={this.state.ingredients}/>
