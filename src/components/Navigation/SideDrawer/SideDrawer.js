@@ -8,7 +8,8 @@ const sideDrawer = ( props ) => {
 
   return (
     <div className={classes.SideDrawer}>
-      <Logo />
+      {/* Passing the height of the Logo as prop, and it being applied as inline styling */}
+      <Logo height={'11%'}/>
       <nav>
         <NavigationItems />
       </nav>
