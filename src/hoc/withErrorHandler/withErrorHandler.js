@@ -13,15 +13,21 @@ const withErrorHandler = ( WrappedComponent, axios ) => {
 
     componentDidMount() {
       // when sending a new request, reset error state
-      axios.interceptors.request.use( req => {
+      this.reqInterceptor = axios.interceptors.request.use( req => {
         this.setState({error: null});
         return req;
       });
 
       // if receiving an error from the request, save the error data to the state
-      axios.interceptors.response.use( res => res, error => {
+      this.resInterceptor = axios.interceptors.response.use( res => res, error => {
         this.setState({error: error});
       });
+    }
+
+    // remove the interceptors when component is unmounted
+    componentWillUnmount() {
+      axios.interceptors.request.eject(this.reqInterceptor);
+      axios.interceptors.respone.eject(this.resInterceptor);
     }
 
     // handler for the modal to dissapear when backdrop clicked
