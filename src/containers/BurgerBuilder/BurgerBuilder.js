@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import axios from '../../axios-orders'; // import out axios instance
 
-import Aux from '../../hoc/Auxiliar';
+import Aux from '../../hoc/Auxiliar/Auxiliar';
 import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 import Spinner from '../../components/UI/Spinner/Spinner';
+import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 
 const INGREDIENT_PRICES = {
     salad: 0.5,
@@ -149,4 +150,6 @@ class BurgerBuilder extends Component {
     }
 }
 
-export default BurgerBuilder;
+// wrap the container inside the withErrorHandler HOC and pass the axios object as well
+// so that we can catch any errors
+export default withErrorHandler(BurgerBuilder, axios);

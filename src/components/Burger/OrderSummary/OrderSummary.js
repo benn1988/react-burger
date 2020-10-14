@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Aux from '../../../hoc/Auxiliar';
+import Aux from '../../../hoc/Auxiliar/Auxiliar';
 import Button from '../../UI/Button/Button';
 
 // display the order details: a list of ingredients and amount of ingredients
