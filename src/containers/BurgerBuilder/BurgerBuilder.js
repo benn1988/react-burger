@@ -6,6 +6,7 @@ import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
+import Spinner from '../../components/UI/Spinner/Spinner';
 
 const INGREDIENT_PRICES = {
     salad: 0.5,
@@ -24,8 +25,9 @@ class BurgerBuilder extends Component {
             meat: 0
         },
         totalPrice: 4,
-        purchaseable: false,
-        purchasing: false
+        purchaseable: false, 
+        purchasing: false, // clicked the Order Now button, to show the order details?
+        loading: false // waiting for the request to the server
     }
 
 
@@ -72,6 +74,8 @@ class BurgerBuilder extends Component {
 
     // handler for the "CONTINUE" button click.
     purchaseContinueHandler = () => {
+        // change loading state, to trigger the spinner as soon as the button is clicked
+        this.setState({loading: true});
         // store the order details
         const order = {
             ingredients: this.state.ingredients,
@@ -89,33 +93,47 @@ class BurgerBuilder extends Component {
         }
 
         axios.post('/orders.json', order)
-            .then( response => console.log(response) )
-            .catch( error => console.log(error) )
+            .then( response => {
+                // 
+                this.setState({loading: false, purchasing: false}) // when done, stop showing spinner and close modal
+            } )
+            .catch( error => {
+                // console.log(error)
+                this.setState({loading: false, purchasing: false})
+             } )
     }
 
     render () {
+
         // create a copy of the state
         const disabledInfo = {
             ...this.state.ingredients
         };
+
         // replace the values from the state copy to true or false, wether greater than 0, to be able to manipulate the state of each ingredient's 'Less' button
         for (let key in disabledInfo) {
             disabledInfo[key] = disabledInfo[key] <= 0
         }
+
         // check if all the values of disabledInfo are true, then the 'Order Now' btn is disabled(no ingredients selected)
         const disabledOrderBtn = Object.keys(disabledInfo)
             .map( igKey => disabledInfo[igKey])
             .reduce( (final, current) => {
                 return (final && current);
             } , true);
+
+        // order summary to be the spinner while waiting for the request
+        let orderSummary = this.state.loading ? <Spinner /> : 
+            <OrderSummary 
+            purchaseCancelled={this.purchaseCancelHandler}
+            purchaseContinued={this.purchaseContinueHandler}
+            ingredients={this.state.ingredients} 
+            price={this.state.totalPrice}/>;
+
         return (
             <Aux>
-                <Modal show={this.state.purchasing} modalClosed={this.purchaseCancelHandler}>
-                    <OrderSummary 
-                        purchaseCancelled={this.purchaseCancelHandler}
-                        purchaseContinued={this.purchaseContinueHandler}
-                        ingredients={this.state.ingredients} 
-                        price={this.state.totalPrice}/>
+                <Modal show={this.state.purchasing} modalClosed={this.purchaseCancelHandler}>  
+                {orderSummary}
                 </Modal>
                 <Burger ingredients={this.state.ingredients}/>
                 <BuildControls 
