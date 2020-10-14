@@ -17,20 +17,20 @@ const INGREDIENT_PRICES = {
 }
 
 class BurgerBuilder extends Component {
-
     state = {
-        ingredients: {
-            salad: 0,
-            bacon: 0,
-            cheese: 0,
-            meat: 0
-        },
-        totalPrice: 4,
-        purchaseable: false, 
+        ingredients: null, // ingredients null until they are fetched from the server
+        totalPrice: 4, // starting burger price, with all the other ingredient's prices being added on top
         purchasing: false, // clicked the Order Now button, to show the order details?
         loading: false // waiting for the request to the server
     }
 
+    // get request for ingredients
+    componentDidMount() {
+        axios.get('/ingredients.json')
+            .then( response => {
+                this.setState({ingredients: response.data}) // save the ingredients from the server into the state
+            })
+    }
 
     // handler to add one ingredient each time when the 'More' button is clicked. It accepts the ingredient as argument
     addIngredientHandler = (type) => {
@@ -99,7 +99,6 @@ class BurgerBuilder extends Component {
                 this.setState({loading: false, purchasing: false}) // when done, stop showing spinner and close modal
             } )
             .catch( error => {
-                // console.log(error)
                 this.setState({loading: false, purchasing: false})
              } )
     }
@@ -122,20 +121,23 @@ class BurgerBuilder extends Component {
             .reduce( (final, current) => {
                 return (final && current);
             } , true);
+        
+        // output order summary if ingredients were fetched and its not loading a new request after hitting the 'Continue' button
+        let orderSummary = this.state.ingredients ? 
+            // if loading, render the spinner
+            (this.state.loading ? <Spinner /> : 
+                <OrderSummary 
+                    purchaseCancelled={this.purchaseCancelHandler}
+                    purchaseContinued={this.purchaseContinueHandler}
+                    ingredients={this.state.ingredients} 
+                    price={this.state.totalPrice}/>) 
+            // if no ingredients, dont render anything, so that it doesnt throw an exception
+            : null;
 
-        // order summary to be the spinner while waiting for the request
-        let orderSummary = this.state.loading ? <Spinner /> : 
-            <OrderSummary 
-            purchaseCancelled={this.purchaseCancelHandler}
-            purchaseContinued={this.purchaseContinueHandler}
-            ingredients={this.state.ingredients} 
-            price={this.state.totalPrice}/>;
-
-        return (
+        // wait until the ingredients were fetched from the server to render the burger and burger builder
+        let burger = this.state.ingredients ? (
+            // if ingredients are not null (already fetched from server), output the burger and controls
             <Aux>
-                <Modal show={this.state.purchasing} modalClosed={this.purchaseCancelHandler}>  
-                {orderSummary}
-                </Modal>
                 <Burger ingredients={this.state.ingredients}/>
                 <BuildControls 
                     disabledBtn={disabledInfo}
@@ -145,6 +147,16 @@ class BurgerBuilder extends Component {
                     disabledOrderBtn={disabledOrderBtn}
                     ordered={this.purchaseHandler}
                 />
+            </Aux>
+        // otherwise render the spinner while it waits for the response from the server
+        ) : <Spinner />
+
+        return (
+            <Aux>
+                <Modal show={this.state.purchasing} modalClosed={this.purchaseCancelHandler}>  
+                {orderSummary}
+                </Modal>
+                {burger}
             </Aux>
         );
     }
