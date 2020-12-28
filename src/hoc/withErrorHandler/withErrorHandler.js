@@ -25,10 +25,10 @@ const withErrorHandler = ( WrappedComponent, axios ) => {
     }
 
     // remove the interceptors when component is unmounted
-    componentWillUnmount() {
-      axios.interceptors.request.eject(this.reqInterceptor);
-      axios.interceptors.respone.eject(this.resInterceptor);
-    }
+    // componentWillUnmount() {
+    //   axios.interceptors.request.eject(this.reqInterceptor);
+    //   axios.interceptors.respone.eject(this.resInterceptor);
+    // }
 
     // handler for the modal to dissapear when backdrop clicked
     errorConfirmedHandler() {

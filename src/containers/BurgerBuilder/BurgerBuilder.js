@@ -75,32 +75,16 @@ class BurgerBuilder extends Component {
 
     // handler for the "CONTINUE" button click.
     purchaseContinueHandler = () => {
-        // change loading state, to trigger the spinner as soon as the button is clicked
-        this.setState({loading: true});
-        // store the order details
-        const order = {
-            ingredients: this.state.ingredients,
-            price: this.state.totalPrice,
-            customer: {
-                name: 'Dan Staver',
-                address: {
-                    street: '444 SPRING ST',
-                    city: 'LA MESA',
-                    zip: '91941'
-                },
-                email: 'test@test.com'
-            },
-            deliveryMethod: 'fastest'
+        const queryParams = [];
+        for (let i in this.state.ingredients) {
+            queryParams.push(encodeURIComponent(i) + '=' + encodeURIComponent(this.state.ingredients[i]));
         }
-
-        axios.post('/orders.json', order)
-            .then( response => {
-                // 
-                this.setState({loading: false, purchasing: false}) // when done, stop showing spinner and close modal
-            } )
-            .catch( error => {
-                this.setState({loading: false, purchasing: false})
-             } )
+        queryParams.push(encodeURIComponent('price') + '=' + this.state.totalPrice);
+        const queryString = queryParams.join('&');
+        this.props.history.push({
+            pathname: '/checkout',
+            search: '?' + queryString
+        });
     }
 
     render () {
