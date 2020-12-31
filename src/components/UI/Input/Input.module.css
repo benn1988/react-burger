@@ -1,0 +1,21 @@
+.Input {
+    width: 100%;
+}
+
+.InputElement {
+    outline: none;
+    width: 90%;
+    padding: 10px 0 10px 20px;
+    margin-bottom: 10px;
+    border: 2px solid #969a97;
+    border-radius: 20px;
+    box-sizing: border-box;
+}
+
+.InputElement::placeholder {
+    color: #969a97;
+}
+
+.InputElement:focus {
+    background-color: #eee;
+}

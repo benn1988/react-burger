@@ -13,11 +13,11 @@
     flex-flow: column;
 }
 
-.ContactData input {
+/* .ContactData input {
     margin: 5px auto;
     height: 20px;
     width: 80%;
-}
+} */
 
 @media (min-width: 600px) {
     .ContactData {
