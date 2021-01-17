@@ -8,11 +8,57 @@ import Input from '../../../components/UI/Input/Input';
 
 export default class contactData extends Component {
     state = {
-        name: '',
-        email: '',
-        address: {
-            street: '',
-            postalCode: ''
+        orderForm: {
+                name: {
+                    elementType: 'input',
+                    elementConfig: {
+                        type: 'text',
+                        placeholder: 'Your Name'
+                    },
+                    value: ''
+                },
+                street: {
+                    elementType: 'input',
+                    elementConfig: {
+                        type: 'text',
+                        placeholder: 'Street Name'
+                    },
+                    value: ''
+                },
+                zipCode: {
+                    elementType: 'input',
+                    elementConfig: {
+                        type: 'text',
+                        placeholder: 'Zip Code'
+                    },
+                    value: ''
+                },
+                country: {
+                    elementType: 'input',
+                    elementConfig: {
+                        type: 'text',
+                        placeholder: 'Country'
+                    },
+                    value: ''
+                },
+                email: {
+                    elementType: 'input',
+                    elementConfig: {
+                        type: 'email',
+                        placeholder: 'Your E-mail'
+                    },
+                    value: ''
+                },
+                deliveryMethod: {
+                    elementType: 'select',
+                    elementConfig: {
+                        options: [
+                            {value: 'fastest', displayValue: 'Fastest'},
+                            {value: 'cheapest', displayValue: 'Cheapest'}
+                        ]
+                    },
+                    value: ''
+                },
         },
         loading: false
     }
@@ -25,17 +71,7 @@ export default class contactData extends Component {
         // store the order details
         const order = {
             ingredients: this.props.ingredients,
-            price: this.props.price,
-            customer: {
-                name: 'Diana Staver',
-                address: {
-                    street: '444 SPRING ST',
-                    city: 'LA MESA',
-                    zip: '91941'
-                },
-                email: 'test@test.com'
-            },
-            deliveryMethod: 'fastest'
+            price: this.props.price
         }
 
         axios.post('/orders.json', order)
@@ -49,12 +85,26 @@ export default class contactData extends Component {
     }
 
     render() {
+        // create a new array to store all the form object properties so that we can loop through them
+        const formElementsArray = [];
+        for (let key in this.state.orderForm) {
+            formElementsArray.push({
+                id: key,
+                config: this.state.orderForm[key]
+            })
+        }
+
+        // if loading state true, display the spinner, otherwise display the actual form
         let form = this.state.loading ? <Spinner /> : 
         <form>
-            <Input inputtype="input" type="text" name="name" placeholder="Your name" />
-            <Input inputtype="input" type="email" name="email" placeholder="Your email" />
-            <Input inputtype="input" type="text" name="street" placeholder="Street Address" />
-            <Input inputtype="input" type="text" name="postal" placeholder="Postal Code" />
+            {formElementsArray.map(formElement => (
+                <Input 
+                    key={formElement.id}
+                    elementType={formElement.config.elementType} 
+                    elementConfig={formElement.config.elementConfig}
+                    value={formElement.config.value} />
+            ))}
+
             <Button 
                 btnType="Success"
                 clicked={this.orderHandler}>Order</Button>
