@@ -84,6 +84,20 @@ export default class contactData extends Component {
              } )
     }
 
+    // handler for the form input change
+    inputChangedHandler = (event, identifier) => {
+        // create a copy of order state
+        const updatedForm = {...this.state.orderForm};
+        // because we have objects inside objects, when we use spread, the copy of the object is shallow
+        // this means we have to spread the object inside the object if we want to make any changes to the object inside the object
+        const updatedElement = {...updatedForm[identifier]};
+        // saving the value from the input
+        updatedElement.value = event.target.value;
+        // save the 1st level object with the updated 2nd level object
+        updatedForm[identifier] = updatedElement;
+        this.setState({orderForm: updatedForm});
+    }
+
     render() {
         // create a new array to store all the form object properties so that we can loop through them
         const formElementsArray = [];
@@ -102,7 +116,9 @@ export default class contactData extends Component {
                     key={formElement.id}
                     elementType={formElement.config.elementType} 
                     elementConfig={formElement.config.elementConfig}
-                    value={formElement.config.value} />
+                    value={formElement.config.value} 
+                    changed={(event) => this.inputChangedHandler(event, formElement.id)}
+                    />
             ))}
 
             <Button 
