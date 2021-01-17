@@ -68,10 +68,16 @@ export default class contactData extends Component {
         event.preventDefault();
         // change loading state, to trigger the spinner as soon as the button is clicked
         this.setState({loading: true});
+        // create a new object where we store the input type and value to be submitted to firebase
+        const formData = {};
+        for (let formElementIdentifier in this.state.orderForm) {
+            formData[formElementIdentifier] = this.state.orderForm[formElementIdentifier].value;
+        }
         // store the order details
         const order = {
             ingredients: this.props.ingredients,
-            price: this.props.price
+            price: this.props.price,
+            orderData: formData
         }
 
         axios.post('/orders.json', order)
@@ -110,7 +116,7 @@ export default class contactData extends Component {
 
         // if loading state true, display the spinner, otherwise display the actual form
         let form = this.state.loading ? <Spinner /> : 
-        <form>
+        <form onSubmit={this.orderHandler}>
             {formElementsArray.map(formElement => (
                 <Input 
                     key={formElement.id}
@@ -121,9 +127,7 @@ export default class contactData extends Component {
                     />
             ))}
 
-            <Button 
-                btnType="Success"
-                clicked={this.orderHandler}>Order</Button>
+            <Button btnType="Success">Order</Button>
         </form>
         return (
             <div className={classes.ContactData}>
